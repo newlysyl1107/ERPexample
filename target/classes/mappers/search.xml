@@ -2,39 +2,102 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-  
+
 <mapper namespace="search">
-    
-    <resultMap id="staffVOMap" type="erp.com.a.model.StaffVO">
+
+	<!-- 모두 검색 -->
+	<resultMap type="erp.com.a.model.CodeDepartmentVO"
+		id="codeDepartmentMap">
+		<result column="department_code" property="departmentCode" />
+		<result column="department_name" property="departmentName" />
+	</resultMap>
+
+	<resultMap type="erp.com.a.model.StaffVO" id="staffMap">
 		<result column="staff_no" property="staffNo" />
-		<result column="staff_name" property="staffName" />
 		<result column="jumin_no" property="juminNo" />
 		<result column="school_code" property="schoolCode" />
+		<result column="staff_name" property="staffName" />
+		<result column="gender" property="gender" />
 		<result column="department_code" property="departmentCode" />
 		<result column="graduate_day" property="graduateDay" />
-		<result column="gender" property="gender" />
+
 	</resultMap>
-	
-    
-    <!-- 모두 검색 -->
-    <select id="selectAll" resultMap="staffVOMap">
-        SELECT *
-        FROM STAFF
-    </select>
-    
-    <!-- staff 테이블에 추가 -->
-    <insert id="insertStaff" parameterType="erp.com.a.model.StaffVO">
-        INSERT INTO STAFF(STAFF_NO, STAFF_NAME, JUMIN_NO, SCHOOL_CODE, DEPARTMENT_CODE, GENDER, GRADUATE_DAY)
-        VALUES(staff_seq.nextval, #{staffName}, #{juminNo}, #{schoolCode}, #{departmentCode}, #{gender}, #{graduateDay})
-    </insert>
-    
-    
-    <!-- staff_skill 테이블에 추가 -->
-    <insert id="insertStaffSkill" parameterType="erp.com.a.model.StaffSkillVO">
-        INSERT INTO STAFF_SKILL ( STAFF_SKILL_NO, STAFF_NO, SKILL_CODE )
-        VALUES( staff_skill_seq.nextval, #{staffNo}, #{skillCode} )
-    </insert>
-    
+
+	<resultMap type="erp.com.a.model.SearchVO" id="searchMap">
+		<collection property="staffVO" resultMap="staffMap" />
+		<collection property="codeDepartmentVO"
+			resultMap="codeDepartmentMap" />
+	</resultMap>
+
+	<select id="selectAll" resultMap="searchMap">
+		SELECT S.STAFF_NO,
+		S.STAFF_NAME, S.JUMIN_NO, C.DEPARTMENT_NAME, S.GENDER,
+		S.GRADUATE_DAY
+		FROM STAFF S
+		INNER JOIN CODE_DEPARTMENT C
+		ON C.DEPARTMENT_CODE =
+		S.DEPARTMENT_CODE
+	</select>
+
+	<!-- staff 테이블에 추가 -->
+	<insert id="insertStaff" parameterType="erp.com.a.model.StaffVO">
+		INSERT INTO
+		STAFF(STAFF_NO, STAFF_NAME, JUMIN_NO, SCHOOL_CODE,
+		DEPARTMENT_CODE,
+		GENDER, GRADUATE_DAY)
+		VALUES(staff_seq.nextval, #{staffName},
+		#{juminNo}, #{schoolCode}, #{departmentCode},
+		#{gender},
+		#{graduateDay})
+	</insert>
+
+	<!-- staff_skill 테이블에 추가 -->
+	<insert id="insertStaffSkill"
+		parameterType="erp.com.a.model.StaffSkillVO">
+		INSERT INTO STAFF_SKILL ( STAFF_SKILL_NO, STAFF_NO,
+		SKILL_CODE )
+		VALUES( staff_skill_seq.nextval, #{staffNo}, #{skillCode}
+		)
+	</insert>
+
+	<!-- staff 불러오기 -->
+	<select id="selectStaff" resultMap="staffMap"
+		parameterType="int">
+		SELECT *
+		FROM STAFF
+		WHERE STAFF_NO=#{id}
+	</select>
+
+	<!-- staff 테이블 수정 -->
+	<update id="updateStaff" parameterType="erp.com.a.model.StaffVO">
+		UPDATE STAFF
+		SET
+		STAFF_NAME=#{staffName}, JUMIN_NO=#{juminNo},
+		SCHOOL_CODE=#{schoolCode}, DEPARTMENT_CODE=#{departmentCode},
+		GRADUATE_DAY=#{graduateDay}
+		WHERE STAFF_NO=#{staffNo}
+	</update>
+
+	<!-- staff_skill 테이블 수정 -->
+	<update id="updateStaffSkill"
+		parameterType="erp.com.a.model.StaffSkillVO">
+		UPDATE STAFF_SKILL
+		SET SKILL_CODE=#{skillCode}
+		WHERE
+		STAFF_NO=#{staffNo}
+	</update>
+
+	<!-- staff 테이블 삭제 -->
+	<delete id="deleteStaff">
+		DELETE FROM STAFF
+		WHERE STAFF_NO=#{staffNo}
+	</delete>
+
+	<!-- staff_skill 테이블 삭제 -->
+	<delete id="deleteStaffSkill">
+		DELETE FROM STAFF_SKILL
+		WHERE STAFF_NO=#{staffNo}
+	</delete>
 </mapper>
 
 

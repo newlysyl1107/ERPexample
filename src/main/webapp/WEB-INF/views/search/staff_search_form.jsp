@@ -20,8 +20,6 @@
 
 </head>
 <body>
-
-
 	<div class="container">
 	<div class="search-input">
 		<div class="row" style="text-align: center;">
@@ -95,7 +93,8 @@
 	}
 	
 	function openInsertPage() {
-		window.open("insertStaffPage", "", "width=1370, height=700, resizable=no");
+		window.name = "parent";
+		window.open("insertStaffPage", "child", "width=1370, height=700, resizable=no");
 	}
 </script>
 

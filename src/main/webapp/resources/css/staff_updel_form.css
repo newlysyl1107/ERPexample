@@ -1,0 +1,69 @@
+@charset "UTF-8";
+
+.container {
+	margin-top: 200px;
+}
+
+.col-title {
+	text-align: center;
+	background-color: #cecece;
+	border: 1px solid #111;
+	padding-top: 9px;
+	height: 44px;
+	font-size: 15px;
+}
+
+.col-3 {
+	padding-top: 9px;
+	text-align: center;
+	border: 1px solid #111;
+}
+
+.col-7 {
+	padding-top: 9px;
+	text-align: center;
+	border: 1px solid #111;
+}
+
+.searchBox {
+	padding-top: 9px;
+	text-align: center;
+	border: 1px solid #111;
+}
+
+.year-select {
+	width: 200px;
+}
+
+.month-select {
+	width: 100px;
+	margin-left: 20px;
+}
+
+.day-select {
+	margin-left: 20px;
+	width: 100px;
+}
+
+.btn-wrap {
+	text-align: center;
+	margin-top: 22px;
+}
+
+.jumin-front {
+	width: 86px;
+}
+
+.jumin-back {
+	width: 86px;
+}
+
+.update-btn {
+	border: 1px solid #e9e9e9;
+	width: 99px;
+}
+
+.delete-btn {
+	width:99px;
+	border: 1px solid #e9e9e9;
+}

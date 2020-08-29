@@ -17,7 +17,7 @@
 </head>
 <body>
 
-<form action="insertStaff" id="form" method="post">
+<form action="insertStaff" name="frm" id="frm" method="post">
 <input type="hidden" value="1" name="staffVO.gender">
 	<div class="container">
 		<div class="search-input">
@@ -75,8 +75,8 @@
 			</div>
 		</div>
 		<div class="btn-wrap">
-			<button type="button" class="insert-btn" onclick="insertStaff()"> 등록 </button>
-			<button type="button" class="clear-btn"> 초기화 </button>
+			<button type="button" id="submitBtn" class="insert-btn" onclick="insertStaff()"> 등록 </button>
+			<button type="button" id="clearBtn" class="clear-btn"> 초기화 </button>
 		</div>
 	</div>
 </form>
@@ -123,6 +123,9 @@ $(document).ready(function() {
 	<script>
 		function insertStaff() {
 			
+/*  		var submitButton = document.getElementById('submitBtn');
+			submitButton.disabled = true; */
+			
 			var staffName = $("#staffName").val();
 			var juminFront = $("#juminFront").val();
 			var juminBack = $("#juminBack").val();
@@ -136,7 +139,7 @@ $(document).ready(function() {
 			var graduateDayCheck = false;
 			var techCheck = false;
 			
-			var formTag = document.getElementById("form");
+			var formTag = document.getElementById("frm");
 			
 			
 			// 이름 공백 확인
@@ -164,7 +167,6 @@ $(document).ready(function() {
 				schoolElement.setAttribute("name", "staffVO.schoolCode");
 				schoolElement.setAttribute("value", schoolValue);
 				formTag.appendChild(schoolElement);
-				alert("학력 = " + schoolValue);
 			}
 			
 			// 부서 공백 확인 후 유효하면 form append
@@ -178,37 +180,45 @@ $(document).ready(function() {
 				departmentElement.setAttribute("name", "staffVO.departmentCode");
 				departmentElement.setAttribute("value", departmentValue);
 				formTag.appendChild(departmentElement);
-				alert("부서 = " + departmentValue);
 			}
 			
 			// 졸업일 공백 확인 후 유효하면 form append
 			if( $("#graduateYear > option:selected").val() == 'none'  ||
 				$("#graduateMonth > option:selected").val() == 'none' ||
 				$("#graduateDay > option:selected").val() == 'none')     {
-					alert("졸업일을 선택해주세요");
+				alert("졸업일을 선택해주세요");
+			} 
+			
+			var yearValue = $("#graduateYear option:selected").val();
+			var monthValue = $("#graduateMonth option:selected").val();
+			var dateValue = $("#graduateDay option:selected").val();
+			
+			if(monthValue < 10) {
+				monthValue = "0" + monthValue;
+			}
+			
+			if(dateValue < 10) {
+				dateValue = "0" + dateValue;
+			}
+			var graduateDay = yearValue + "-" + monthValue + "-" + dateValue;		// 2020-01-01
+			alert(graduateDay);
+			
+			// 졸업일 날짜 유효성 확인
+			var graduateDayReg = /[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])/;
+			
+			if(graduateDayReg.test(graduateDay) == false) {
+				alert("졸업일이 유효한 날짜가 아닙니다.");
 			} else {
 				graduateDayCheck = true;
-				var yearValue = $("#graduateYear option:selected").val();
-				var monthValue = $("#graduateMonth option:selected").val();
-				var dateValue = $("#graduateDay option:selected").val();
-				var graduateDay = yearValue + "-" + monthValue + "-" + dateValue;
 				var graduateElement = document.createElement("input");
 				graduateElement.setAttribute("type", "hidden");
 				graduateElement.setAttribute("name", "graduateDay");
 				graduateElement.setAttribute("value", graduateDay);
 				formTag.appendChild(graduateElement);
-				alert("졸업일 = " + graduateDay);
 			}
-			
-			
-			// 졸업일 날짜 유효성 확인
-			
-			
-			
-			
-			
-			
-			
+    			
+    			
+
 			
 			// 기술 선택 확인 후 유효하면 form append
 			if( $("input:checkbox[id=tech1]").is(":checked") == false &&
@@ -229,15 +239,13 @@ $(document).ready(function() {
 				techElement.setAttribute("name", "skillArray");
 				techElement.setAttribute("value", techValues);
 				formTag.appendChild(techElement);
-				alert("담긴 기술들");
-				alert(techValues);
 				console.log(typeof techValues);
 				console.log(typeof techValues[0]);
 				console.log(typeof techValues[1]);
 			}
 			
 			// 주민번호 유효성 확인 후 유효하면 form append
-			if( !juminReg.test(jumin) ) {
+			if( juminFront != '' && juminBack != '' && !juminReg.test(jumin) ) {
 				alert("주민번호가 유효하지 않습니다.");
 			} else {
 				juminCheck = true;
@@ -246,7 +254,6 @@ $(document).ready(function() {
 				juminElement.setAttribute("name", "juminNo");
 				juminElement.setAttribute("value", jumin);
 				formTag.appendChild(juminElement);
-				alert("주민번호 = " + jumin);
 			}
 			
 			
@@ -255,21 +262,27 @@ $(document).ready(function() {
 				
 				
 				if(confirm("정말 저장 하시겠습니까?") == true) {
-					$("#form").submit();
+				    
+				    var staffData = $("[id=frm]").serialize();
+		
+				    $.ajax({
+				    	url:"insertStaff",
+				    	type:"post",
+				    	data:staffData,
+				    	success:function(result) {
+				    		alert(result.msg);
+				    		window.opener.location.reload();    //부모창 reload
+						    window.close();    //현재 팝업창 Close
+				    	}
+				    })
+				    
 				} else {
+					// 저장 취소한 경우
 					return false;
 				}
-
-/*  				var confirm = confirm("정말 저장 하시겠습니까?");
-				if(confirm) {
-					alert("저장되었습니다.");
-					$("#form").submit(); 
-				} */
 			}
 		}
 	</script>
-	
-	
 </body>
 </html>
 
